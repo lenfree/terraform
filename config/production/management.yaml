@@ -1,0 +1,39 @@
+defaults: &defaults
+  aws_region: us-east-1
+  key_name: mykey # AWS Key Pair
+  ami: ami-408c7f28
+  domain_name: my-example.com
+  environment: production
+  environment_short: pr
+  s3_bucket_terraform: terraform-management-prod
+  s3_bucket_versioning: true
+  disable_api_termination: true
+  prefix: management
+  availability_zones:
+    - "us-east-1a"
+    - "us-east-1b"
+    - "us-east-1e"
+
+vpc:
+  << : *defaults 
+  source: './modules/management_vpc'
+  s3_bucket_acl: authenticated-read
+  vpc_cidr: "10.61.64.0/22"
+  vpc_tag_name: mgmt_vpc
+  public_subnets:
+    - 10.61.64.64/26
+    - 10.61.65.64/26
+    - 10.61.66.64/26
+  private_subnets:
+    - 10.61.64.0/26
+    - 10.61.65.0/26
+    - 10.61.66.0/26
+
+http_server:
+  << : *defaults 
+  source: './modules/web_server'
+  s3_bucket_acl: authenticated-read
+  vpc_id: "${module.vpc.id}"
+  http_port: 8080
+  instance_type: t1.micro
+  public_subnet_ids: "${module.vpc.public_subnet_ids}"

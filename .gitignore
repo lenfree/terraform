@@ -1,0 +1,10 @@
+.bin
+.bundle
+.terraform
+.gems
+root.tf.json
+terraform.tfstate
+terraform.tfstate.backup
+*.log
+*.tmp
+*.swp
