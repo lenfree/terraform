@@ -8,9 +8,9 @@ orchestration.
 Tools:
 ------
 
-Terraform - to easily provision AWS resources.
-Ansible   - to orchestrate and configure different services.
-Ruby      - wrapper script in Ruby >= v2.4.0
+1.   Terraform - to easily provision AWS resources.
+2.   Ansible   - to orchestrate and configure different services if needed?
+3.   Ruby      - wrapper script in Ruby >= v2.4.0
 
 Note: Please avoid or minimise bash scripts.
 
@@ -39,10 +39,12 @@ we have a Ruby wrapper script would basically generate a root.tf.json
 from a YAML configuration file for different services in multiple
 environments.
 
-# bundle install
-# bundle exec ruby ./bin/run.rb
-# bundle exec ruby ./bin/run.rb terraform <environment> <site-name>
-# bundle exec ruby ./bin/run.rb terraform production management
+```
+bundle install
+bundle exec ruby ./bin/run.rb
+bundle exec ruby ./bin/run.rb terraform <environment> <site-name>
+bundle exec ruby ./bin/run.rb terraform production management
+```
 
 After a root.tf.json file is generated, this will describe a site's
 entire infrastructure. Whenever we want to run plan or apply, we 
@@ -50,10 +52,12 @@ always apply this per module. This is so we take advantage of our
 modular component/service design rather than applying against all
 services in a site.
 
-# terraform plan -target=module.vpc
-# terraform apply -target=module.vpc
+```
+terraform plan -target=module.vpc
+terraform apply -target=module.vpc
+```
 
-## Above command would soon be replaced with Rakefile or Makefile?
+Above command would soon be replaced with Rakefile or Makefile?
 
 TODO:
 -----
