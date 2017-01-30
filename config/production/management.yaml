@@ -43,12 +43,11 @@ elasticsearch:
   elasticsearch_domain_name: 'mytest-es'
   elasticsearch_version: 2.3
   allow_explicit_index: true
-  access_policies_version: 2017-01-30
   allow_source_cidrs: 0.0.0.0/0
   automated_snapshot_start_hour: 23
-  instance_type: t1.micro
+  instance_type: m3.large.elasticsearch
   instance_count: 1
   dedicated_master_enabled: true
   dedicated_master_type: null
-  dedicated_master_count: 1
+  dedicated_master_count: 2
   zone_awareness_enabled: false

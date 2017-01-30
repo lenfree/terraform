@@ -8,14 +8,16 @@ resource "aws_elasticsearch_domain" "es" {
 
   access_policies = <<CONFIG
 {
-    "Version": "${var.access_policies_version}",
+    "Version": "2012-10-17",
     "Statement": [
         {
             "Action": "es:*",
             "Principal": "*",
             "Effect": "Allow",
             "Condition": {
-                "IpAddress": {"aws:SourceIp": ["${var.allow_source_cidrs}"]}
+                "IpAddress": {
+                  "aws:SourceIp": ["${var.allow_source_cidrs}"]
+                }
             }
         }
     ]

@@ -4,8 +4,6 @@ variable "elasticsearch_version" {}
 
 variable "allow_explicit_index" {}
 
-variable "access_policies_version" {}
-
 variable "allow_source_cidrs" {}
 
 variable "instance_type" {}
