@@ -52,9 +52,37 @@ always apply this per module. This is so we take advantage of our
 modular component/service design rather than applying against all
 services in a site.
 
+To update get modules updates:
+
+```
+terraform get -update=true
+```
+
+If backend statefile is configured, pull the remote config with:
+
+```
+terraform remote pull
+```
+
+To apply specific service/component:
+
 ```
 terraform plan -target=module.vpc
 terraform apply -target=module.vpc
+```
+
+To configure to use S3 backend to store statefile for a new service/
+component:
+
+```
+make help
+make set-backend SITE=management ENVIRONMENT=production MODULE=vpc
+```
+
+To disable remote backend config:
+
+```
+terraform remote config -pull=false
 ```
 
 Above command would soon be replaced with Rakefile or Makefile?

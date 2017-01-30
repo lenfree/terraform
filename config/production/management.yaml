@@ -1,24 +1,21 @@
 defaults: &defaults
   aws_region: us-east-1
-  key_name: mykey # AWS Key Pair
-  ami: ami-408c7f28
   domain_name: my-example.com
   environment: production
   environment_short: pr
-  s3_bucket_terraform: terraform-management-prod
-  s3_bucket_versioning: true
-  disable_api_termination: true
   prefix: management
   availability_zones:
-    - "us-east-1a"
-    - "us-east-1b"
-    - "us-east-1e"
+    - 'us-east-1a'
+    - 'us-east-1b'
+    - 'us-east-1e'
 
 vpc:
   << : *defaults 
   source: './modules/management_vpc'
+  s3_bucket_terraform: terraform-management-prod
+  s3_bucket_versioning: true
   s3_bucket_acl: authenticated-read
-  vpc_cidr: "10.61.64.0/22"
+  vpc_cidr: 10.61.64.0/22
   vpc_tag_name: mgmt_vpc
   public_subnets:
     - 10.61.64.64/26
@@ -32,8 +29,26 @@ vpc:
 http_server:
   << : *defaults 
   source: './modules/web_server'
+  key_name: mykey # AWS Key Pair
+  ami: ami-408c7f28
   s3_bucket_acl: authenticated-read
   vpc_id: "${module.vpc.id}"
   http_port: 8080
   instance_type: t1.micro
   public_subnet_ids: "${module.vpc.public_subnet_ids}"
+
+elasticsearch:
+  << : *defaults
+  source: './modules/elasticsearch'
+  elasticsearch_domain_name: 'mytest-es'
+  elasticsearch_version: 2.3
+  allow_explicit_index: true
+  access_policies_version: 2017-01-30
+  allow_source_cidrs: 0.0.0.0/0
+  automated_snapshot_start_hour: 23
+  instance_type: t1.micro
+  instance_count: 1
+  dedicated_master_enabled: true
+  dedicated_master_type: null
+  dedicated_master_count: 1
+  zone_awareness_enabled: false

@@ -16,12 +16,6 @@ variable "availability_zones" {
   type = "list"
 }
 
-variable "key_name" {}
-
-variable "ami" {}
-
-variable "disable_api_termination" {}
-
 variable "domain_name" {}
 
 variable "environment_short" {}

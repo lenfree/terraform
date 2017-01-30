@@ -10,17 +10,11 @@ variable "key_name" {}
 
 variable "environment" {}
 
-variable "disable_api_termination" {}
-
 variable "environment_short" {}
 
 variable "availability_zones" {
   type = "list"
 }
-
-variable "s3_bucket_terraform" {}
-
-variable "s3_bucket_versioning" {}
 
 variable "s3_bucket_acl" {}
 
