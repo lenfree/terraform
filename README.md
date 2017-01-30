@@ -97,3 +97,19 @@ ii. Write a test to validate our YAML structure and make sure this is as flat
 as possible.
 
 iii. Code version release script.
+
+## Credits
+
+JChan
+
+## License
+
+TODO: License
+
+## Contributing
+1. Fork it!
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request.
+
