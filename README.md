@@ -58,7 +58,8 @@ To update get modules updates:
 terraform get -update=true
 ```
 
-If backend statefile is configured, pull the remote config with:
+If backend statefile is configured, pull the remote statefile
+and sync it locally with:
 
 ```
 terraform remote pull
@@ -83,6 +84,12 @@ To disable remote backend config:
 
 ```
 terraform remote config -pull=false
+```
+
+or
+
+```
+terraform remote config -disable
 ```
 
 Above command would soon be replaced with Rakefile or Makefile?

@@ -25,3 +25,7 @@ output "nat_gw" {
 output "internet_gw" {
   value = "${aws_internet_gateway.igw.id}"
 }
+
+output "zone_id" {
+  value = "${aws_route53_zone.main.zone_id}"
+}

@@ -1,6 +1,6 @@
 defaults: &defaults
   aws_region: us-east-1
-  domain_name: my-example.com
+  domain_name: lenfree-example.com
   environment: production
   environment_short: pr
   prefix: management
@@ -36,6 +36,9 @@ http_server:
   http_port: 8080
   instance_type: t1.micro
   public_subnet_ids: "${module.vpc.public_subnet_ids}"
+  route53_zone: "${module.vpc.zone_id}"
+  route53_record_name: www
+  route53_record_type: A
 
 elasticsearch:
   << : *defaults

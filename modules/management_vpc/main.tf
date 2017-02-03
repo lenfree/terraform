@@ -95,12 +95,21 @@ resource "aws_s3_bucket" "remote_state" {
   bucket = "${var.prefix}-remote_state-${var.environment}"
 
   versioning {
-    enabled = true
+    enabled = "${var.s3_bucket_versioning}"
   }
 
   tags {
     Name        = "${var.prefix}-remote_state-${var.environment}"
     Environment = "${var.environment}"
     Terraform   = true
+  }
+}
+
+resource "aws_route53_zone" "main" {
+  name = "${var.domain_name}"
+
+  tags {
+    Terraform   = true
+    Environment = "${var.environment}"
   }
 }
