@@ -42,3 +42,11 @@ CONFIG
     Terraform = true
   }
 }
+
+resource "aws_route53_record" "es" {
+  zone_id = "${var.route53_zone}"
+  name    = "${var.route53_record_name}"
+  type    = "${var.route53_record_type}"
+  ttl     = "300"
+  records = ["${aws_elasticsearch_domain.es.endpoint}"]
+}

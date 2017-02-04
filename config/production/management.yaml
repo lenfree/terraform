@@ -13,7 +13,7 @@ vpc:
   << : *defaults 
   source: './modules/management_vpc'
   s3_bucket_terraform: terraform-management-prod
-  s3_bucket_versioning: true
+  s3_bucket_versioning: false
   s3_bucket_acl: authenticated-read
   vpc_cidr: 10.61.64.0/22
   vpc_tag_name: mgmt_vpc
@@ -43,7 +43,7 @@ http_server:
 elasticsearch:
   << : *defaults
   source: './modules/elasticsearch'
-  elasticsearch_domain_name: 'mytest-es'
+  elasticsearch_domain_name: 'myes'
   elasticsearch_version: 2.3
   allow_explicit_index: true
   allow_source_cidrs: 0.0.0.0/0
@@ -51,6 +51,13 @@ elasticsearch:
   instance_type: m3.large.elasticsearch
   instance_count: 1
   dedicated_master_enabled: true
-  dedicated_master_type: null
+  dedicated_master_type: t2.small.elasticsearch
   dedicated_master_count: 2
   zone_awareness_enabled: false
+  route53_zone: "${module.vpc.zone_id}"
+  route53_record_name: mykibana
+  route53_record_type: CNAME
+
+cloudtrail:
+  << : *defaults
+  source: './modules/cloudtrail'

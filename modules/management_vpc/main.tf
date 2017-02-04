@@ -92,7 +92,8 @@ resource "aws_route_table_association" "private" {
 }
 
 resource "aws_s3_bucket" "remote_state" {
-  bucket = "${var.prefix}-remote_state-${var.environment}"
+  bucket        = "${var.prefix}-remote_state-${var.environment}"
+  force_destroy = true
 
   versioning {
     enabled = "${var.s3_bucket_versioning}"
