@@ -3,6 +3,8 @@ resource "aws_elasticsearch_domain" "es" {
   elasticsearch_version = "${var.elasticsearch_version}"
 
   advanced_options {
+    # This parameter expects string instead of boolean
+    # up to v8.5.
     "rest.action.multi.allow_explicit_index" = "${var.allow_explicit_index}"
   }
 

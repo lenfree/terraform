@@ -1,7 +1,6 @@
 resource "aws_cloudtrail" "trail" {
   name                          = "${var.prefix}"
   s3_bucket_name                = "${aws_s3_bucket.trail.id}"
-  s3_key_prefix                 = "prefix"
   include_global_service_events = false
 
   tags {

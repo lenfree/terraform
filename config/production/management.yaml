@@ -45,7 +45,7 @@ elasticsearch:
   source: './modules/elasticsearch'
   elasticsearch_domain_name: 'myes'
   elasticsearch_version: 2.3
-  allow_explicit_index: true
+  allow_explicit_index: 'true'
   allow_source_cidrs: 0.0.0.0/0
   automated_snapshot_start_hour: 23
   instance_type: m3.large.elasticsearch
@@ -61,3 +61,19 @@ elasticsearch:
 cloudtrail:
   << : *defaults
   source: './modules/cloudtrail'
+
+logstash_es:
+  << : *defaults
+  source: './modules/logstash_es'
+  key_name: mykey # AWS Key Pair
+  ami: ami-408c7f28
+  vpc_id: "${module.vpc.id}"
+  # This instance needs more memory to avoid getting error with
+  # logstash-core-event-java Logstash plugin
+  instance_type: m3.medium
+  # Temporarily assign public subnet for troubleshooting.
+  private_subnet_ids: "${module.vpc.public_subnet_ids}"
+  elasticsearch_endpoint: "${module.elasticsearch.endpoint}"
+  cloudtrail_s3_bucket_arn: "${module.cloudtrail.arn}"
+  elasticsearch_arn: "${module.elasticsearch.arn}"
+
