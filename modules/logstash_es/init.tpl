@@ -28,7 +28,7 @@ sudo /usr/share/logstash/bin/logstash-plugin install logstash-input-s3
 sudo /usr/share/logstash/bin/logstash-plugin install logstash-codec-cloudtrail
 sudo /usr/share/logstash/bin/logstash-plugin install logstash-output-amazon_es
 
-cat << 'END_OF_FILE' > /home/ubuntu/logstash.conf
+cat << 'END_OF_FILE' > /etc/logstash/conf.d/trail_es.conf
 input {
     s3 {
       bucket => "trail-management-pr"
@@ -40,19 +40,23 @@ input {
 }
 output {
   amazon_es {
-        hosts => ["\"${elasticsearch_host}\""]
+        hosts => ["${elasticsearch_host}"]
         region => "us-east-1"
         index => "trail-logs-%{+YYYY.MM.dd}"
     }
 }
 END_OF_FILE
 
-sudo chown ubuntu:ubuntu /home/ubuntu/logstash.conf
-
+# TODO: Use systemd or upstart?
 # Start logstash with default workers and other options.
 # For production, best to increase workers.
 # More info on these options:
 # https://www.elastic.co/guide/en/logstash/current/command-line-flags.html
 # https://www.elastic.co/guide/en/logstash/current/performance-troubleshooting.html
 # https://www.elastic.co/blog/a-history-of-logstash-output-workers
+# https://www.elastic.co/guide/en/logstash/current/logstash-settings-file.html
 sudo /usr/share/logstash/bin/logstash -f /home/ubuntu/logstash.conf
+# Ubuntu 12.04 through 5.10
+# sudo initctl start logstash
+# Ubuntu 6.04 and newer
+# sudo sudo systemctl start logstash.servic

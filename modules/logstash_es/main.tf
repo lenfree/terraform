@@ -128,7 +128,7 @@ resource "aws_iam_role_policy" "ec2_s3_trail" {
             ],
             "Resource": [
                 "${var.cloudtrail_s3_bucket_arn}",
-                "${var.cloudtrail_s3_bucket_arn}"
+                "${var.cloudtrail_s3_bucket_arn}/*"
             ]
         }
     ]

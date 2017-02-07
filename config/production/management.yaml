@@ -62,6 +62,9 @@ cloudtrail:
   << : *defaults
   source: './modules/cloudtrail'
 
+# Please check module logstash_es/init.tpl for
+# Logstash configuration information required
+# in production
 logstash_es:
   << : *defaults
   source: './modules/logstash_es'
@@ -74,6 +77,6 @@ logstash_es:
   # Temporarily assign public subnet for troubleshooting.
   private_subnet_ids: "${module.vpc.public_subnet_ids}"
   elasticsearch_endpoint: "${module.elasticsearch.endpoint}"
-  cloudtrail_s3_bucket_arn: "${module.cloudtrail.arn}"
+  cloudtrail_s3_bucket_arn: "${module.cloudtrail.s3_bucket_arn}"
   elasticsearch_arn: "${module.elasticsearch.arn}"
 
