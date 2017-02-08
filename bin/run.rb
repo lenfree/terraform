@@ -26,7 +26,7 @@ end
 # config tf.json.
 class Config
   def initialize(environment: '', site: '')
-    site    = site 
+    site    = site
     dir     = 'config/' + environment
     @config = dir + '/' + site + '.yaml'
   end
@@ -44,7 +44,7 @@ class Config
   end
 
   def dump(json_data: {})
-    File.write('root.tf.json', json_data) 
+    File.write('root.tf.json', json_data)
   end
 
   def generate_json(data: {})
@@ -60,4 +60,3 @@ class Config
 end
 
 AmpCli.start
-
