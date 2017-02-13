@@ -7,7 +7,7 @@ defaults: &defaults
   availability_zones:
     - 'us-east-1a'
     - 'us-east-1b'
-    - 'us-east-1e'
+    - 'us-east-1d'
 
 vpc:
   << : *defaults 
@@ -75,8 +75,20 @@ logstash_es:
   # logstash-core-event-java Logstash plugin
   instance_type: m3.medium
   # Temporarily assign public subnet for troubleshooting.
-  private_subnet_ids: "${module.vpc.public_subnet_ids}"
+  private_subnet_ids: "${module.vpc.private_subnet_ids}"
   elasticsearch_endpoint: "${module.elasticsearch.endpoint}"
   cloudtrail_s3_bucket_arn: "${module.cloudtrail.s3_bucket_arn}"
   elasticsearch_arn: "${module.elasticsearch.arn}"
+
+consul:
+  << : *defaults
+  source: './modules/consul'
+  public_subnet_ids: "${module.vpc.public_subnet_ids}"
+  route53_zone: "${module.vpc.zone_id}"
+  route53_record_name: consul
+  route53_record_type: A
+  vpc_id: "${module.vpc.id}"
+  ami: ami-408c7f28
+  key_name: mykey # AWS Key Pair
+  instance_type: t1.micro
 
