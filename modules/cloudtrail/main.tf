@@ -1,7 +1,7 @@
 resource "aws_cloudtrail" "trail" {
   name                          = "${var.prefix}"
   s3_bucket_name                = "${aws_s3_bucket.trail.id}"
-  include_global_service_events = false
+  include_global_service_events = true
 
   tags {
     Terraform = true
@@ -9,7 +9,7 @@ resource "aws_cloudtrail" "trail" {
 }
 
 resource "aws_s3_bucket" "trail" {
-  bucket        = "trail-${var.prefix}-${var.environment_short}"
+  bucket        = "cloudtrail-${var.prefix}-${var.environment_short}"
   force_destroy = true
 
   policy = <<POLICY
@@ -23,7 +23,7 @@ resource "aws_s3_bucket" "trail" {
               "Service": "cloudtrail.amazonaws.com"
             },
             "Action": "s3:GetBucketAcl",
-            "Resource": "arn:aws:s3:::trail-${var.prefix}-${var.environment_short}"
+            "Resource": "arn:aws:s3:::cloudtrail-${var.prefix}-${var.environment_short}"
         },
         {
             "Sid": "AWSCloudTrailWrite",
@@ -32,7 +32,7 @@ resource "aws_s3_bucket" "trail" {
               "Service": "cloudtrail.amazonaws.com"
             },
             "Action": "s3:PutObject",
-            "Resource": "arn:aws:s3:::trail-${var.prefix}-${var.environment_short}/*",
+            "Resource": "arn:aws:s3:::cloudtrail-${var.prefix}-${var.environment_short}/*",
             "Condition": {
                 "StringEquals": {
                     "s3:x-amz-acl": "bucket-owner-full-control"

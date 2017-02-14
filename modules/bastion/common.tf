@@ -10,7 +10,7 @@ provider "aws" {
 
 # Lock version
 terraform {
-  required_version = "0.8.1"
+  required_version = "0.8.6"
 }
 
 data "aws_vpc" "main" {

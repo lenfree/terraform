@@ -1,0 +1,4 @@
+resource "aws_key_pair" "lenfree_yeung" {
+  key_name   = "lenfree_yeung"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDdiigyGx0V8DVOq9onbqLhhHXD9o17K+e9hEHD0olQ1uvedObiSu4QQCcDWUtvOJDRWuvOtrPD0KSCbUPcUhrHpfht32gStCrghnlpBKYpEK2owa380nyef1b14mw2UQ29lmCAcA4Yg66mVQgRiLxdz88ADrMT4SJu+mymRLvk373Qqwq17u57h+R/iz2dfLyf4BVXnwuzSElVg8PXbm8NlihsVbIaKladM4neCKM9/J6yFQNS6NSC5//g8Rzr1VqrqBPa7GGt/aUYr+OhyU4VXHxKeK0UjS3fdRP1CAVFOqx5m/ZVfAx6I9oZOPrTkVMitwEWsWupH1HvmtKX61c5 free@free"
+}

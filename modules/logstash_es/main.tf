@@ -46,10 +46,10 @@ resource "aws_security_group_rule" "allow_logstash_out_icmp" {
 
 resource "aws_autoscaling_group" "logstash" {
   name                 = "logstash_autoscaling_group"
-  min_size             = 1
-  max_size             = 2
+  min_size             = 2
+  max_size             = 3
   launch_configuration = "${aws_launch_configuration.logstash.name}"
-  desired_capacity     = 1
+  desired_capacity     = 2
   vpc_zone_identifier  = ["${var.private_subnet_ids}"]
 
   tag {
@@ -69,7 +69,14 @@ data "template_file" "init" {
   template = "${file("${path.module}/init.tpl")}"
 
   vars {
-    elasticsearch_host = "${var.elasticsearch_endpoint}"
+    elasticsearch_host   = "${var.elasticsearch_endpoint}"
+    cloudtrail_s3_bucket = "cloudtrail-${var.prefix}-${var.environment_short}"
+    logstash_conf_dir    = "/etc/logstash/conf.d"
+    trail_es_conf        = "trail.conf"
+
+    # Use aws_region instead of harcoded region for bucket
+    # "${var.aws_region}"
+    aws_region = "ap-southeast-2"
   }
 }
 
@@ -81,9 +88,6 @@ resource "aws_launch_configuration" "logstash" {
   key_name             = "${var.key_name}"
   user_data            = "${data.template_file.init.rendered}"
   iam_instance_profile = "${aws_iam_instance_profile.logstash.id}"
-
-  # Temporarily assign public address for troubleshooting.
-  associate_public_ip_address = true
 }
 
 resource "aws_iam_role_policy" "ec2_es" {

@@ -20,7 +20,7 @@ echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | \
 
 sudo apt-get install apt-transport-https
 
-sudo apt-get -y update && sudo apt-get install -y logstash
+sudo apt-get -y update && sudo apt-get install -y logstash=1:5.1.2-1
 
 sudo update-ca-certificates -f
 
@@ -28,11 +28,11 @@ sudo /usr/share/logstash/bin/logstash-plugin install logstash-input-s3
 sudo /usr/share/logstash/bin/logstash-plugin install logstash-codec-cloudtrail
 sudo /usr/share/logstash/bin/logstash-plugin install logstash-output-amazon_es
 
-cat << 'END_OF_FILE' > /etc/logstash/conf.d/trail_es.conf
+cat << 'END_OF_FILE' > ${logstash_conf_dir}/${trail_es_conf}
 input {
     s3 {
-      bucket => "trail-management-pr"
-      region => "us-east-1"
+      bucket => "${cloudtrail_s3_bucket}"
+      region => "${aws_region}"
       type => "s3"
       add_field => { source => gzfiles }
       codec => cloudtrail {}
@@ -41,7 +41,7 @@ input {
 output {
   amazon_es {
         hosts => ["${elasticsearch_host}"]
-        region => "us-east-1"
+        region => "${aws_region}"
         index => "trail-logs-%{+YYYY.MM.dd}"
     }
 }
@@ -55,7 +55,7 @@ END_OF_FILE
 # https://www.elastic.co/guide/en/logstash/current/performance-troubleshooting.html
 # https://www.elastic.co/blog/a-history-of-logstash-output-workers
 # https://www.elastic.co/guide/en/logstash/current/logstash-settings-file.html
-sudo /usr/share/logstash/bin/logstash -f /home/ubuntu/logstash.conf
+sudo /usr/share/logstash/bin/logstash -f ${logstash_conf_dir}/${trail_es_conf}
 # Ubuntu 12.04 through 5.10
 # sudo initctl start logstash
 # Ubuntu 6.04 and newer
