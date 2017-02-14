@@ -30,7 +30,9 @@ variable "environment_short" {}
 
 variable "prefix" {}
 
-variable "availability_zones" {}
+variable "availability_zones" {
+  type = "list"
+}
 
 variable "route53_zone" {}
 
