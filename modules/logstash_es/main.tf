@@ -57,6 +57,12 @@ resource "aws_autoscaling_group" "logstash" {
     value               = true
     propagate_at_launch = true
   }
+
+  tag {
+    key                 = "Name"
+    value               = "logstash"
+    propagate_at_launch = true
+  }
 }
 
 data "template_file" "init" {
