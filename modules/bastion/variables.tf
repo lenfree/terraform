@@ -1,5 +1,7 @@
 variable "aws_region" {}
 
+variable "ssh_port" {}
+
 variable "ami" {}
 
 variable "instance_type" {}
@@ -34,4 +36,8 @@ variable "route53_record_name" {}
 
 variable "route53_record_type" {}
 
-variable "bastion_sg_id" {}
+variable "asg_min_size" {}
+
+variable "asg_max_size" {}
+
+variable "asg_desired_capacity" {}

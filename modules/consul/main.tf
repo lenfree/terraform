@@ -1,10 +1,21 @@
-resource "aws_security_group_rule" "allow_any_to_consul_ssh" {
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = "${aws_security_group.consul_cluster.id}"
+# Thanks to
+# http://mpas.github.io/post/2016/11/16/20161116_building_a_consul_cluster_using_terraform_aws/
+resource "aws_security_group_rule" "allow_bastion_in_22" {
+  type                     = "ingress"
+  from_port                = "22"
+  to_port                  = "22"
+  protocol                 = "tcp"
+  security_group_id        = "${aws_security_group.consul_cluster.id}"
+  source_security_group_id = "${var.bastion_sg_id}"
+}
+
+resource "aws_security_group_rule" "allow_bastion_out_22" {
+  type                     = "egress"
+  from_port                = "22"
+  to_port                  = "22"
+  protocol                 = "tcp"
+  security_group_id        = "${aws_security_group.consul_cluster.id}"
+  source_security_group_id = "${var.bastion_sg_id}"
 }
 
 resource "aws_security_group_rule" "allow_consul_out_tcp" {
@@ -34,7 +45,6 @@ resource "aws_security_group_rule" "allow_consul_out_icmp" {
   security_group_id = "${aws_security_group.consul_cluster.id}"
 }
 
-# http://mpas.github.io/post/2016/11/16/20161116_building_a_consul_cluster_using_terraform_aws/
 resource "aws_security_group_rule" "consul_cluster_nodes_8300_in" {
   type              = "ingress"
   from_port         = 8300
@@ -143,7 +153,7 @@ resource "aws_security_group_rule" "consul_cluster_nodes_8600_out_udp" {
   security_group_id = "${aws_security_group.consul_cluster.id}"
 }
 
-## elb
+## ELB to Consul cluster security group rules.
 resource "aws_security_group_rule" "consul_cluster_nodes_8300_in_elb" {
   type                     = "ingress"
   from_port                = 8300
@@ -306,25 +316,20 @@ resource "aws_iam_instance_profile" "consul_cluster" {
   roles = ["${aws_iam_role.consul_cluster.name}"]
 }
 
-resource "aws_launch_configuration" "consul-cluster" {
-  image_id      = "${var.ami}"
-  user_data     = "${data.template_file.consul-cluster.rendered}"
-  instance_type = "${var.instance_type}"
+resource "aws_launch_configuration" "consul_cluster" {
+  image_id             = "${var.ami}"
+  user_data            = "${data.template_file.consul-cluster.rendered}"
+  instance_type        = "${var.instance_type}"
+  key_name             = "${var.key_name}"
+  iam_instance_profile = "${aws_iam_instance_profile.consul_cluster.id}"
 
   /* Server RPC (Default 8300). This is used by servers to handle incoming requests from other agents. TCP only.
-                  Serf LAN (Default 8301). This is used to handle gossip in the LAN. Required by all agents. TCP and UDP.
-                  Serf WAN (Default 8302). This is used by servers to gossip over the WAN to other servers. TCP and UDP.
-                  CLI RPC (Default 8400). This is used by all agents to handle RPC from the CLI. TCP only.
-                  HTTP API (Default 8500). This is used by clients to talk to the HTTP API. TCP only.
-                  DNS Interface (Default 8600). Used to resolve DNS queries. TCP and UDP. */
+  Serf LAN (Default 8301). This is used to handle gossip in the LAN. Required by all agents. TCP and UDP.
+  Serf WAN (Default 8302). This is used by servers to gossip over the WAN to other servers. TCP and UDP.
+  CLI RPC (Default 8400). This is used by all agents to handle RPC from the CLI. TCP only.
+  HTTP API (Default 8500). This is used by clients to talk to the HTTP API. TCP only.
+  DNS Interface (Default 8600). Used to resolve DNS queries. TCP and UDP. */
   security_groups = ["${aws_security_group.consul_cluster.id}"]
-
-  key_name = "${var.key_name}"
-
-  /* us a policy which grants read access to the EC2 api
-  iam_instance_profile = "arn:aws:iam::0123456789:read_ec2_policy/ec2" */
-
-  iam_instance_profile = "${aws_iam_instance_profile.consul_cluster.id}"
 }
 
 /*
@@ -342,18 +347,24 @@ data "template_file" "consul-cluster" {
   }
 }
 
-resource "aws_autoscaling_group" "consul-cluster" {
+resource "aws_autoscaling_group" "consul_cluster" {
   min_size             = 1
   max_size             = 3
   desired_capacity     = 3
   min_elb_capacity     = 3
-  vpc_zone_identifier  = ["${var.public_subnet_ids}"]
-  launch_configuration = "${aws_launch_configuration.consul-cluster.name}"
+  vpc_zone_identifier  = ["${var.private_subnet_ids}"]
+  launch_configuration = "${aws_launch_configuration.consul_cluster.name}"
   load_balancers       = ["${aws_elb.consul.id}"]
 
   tag {
     key                 = "Name"
     value               = "consul-cluster-member"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "terraform"
+    value               = true
     propagate_at_launch = true
   }
 }
@@ -478,8 +489,9 @@ resource "aws_security_group_rule" "consul_elbs_8600_out_udp" {
 
 resource "aws_elb" "consul" {
   name            = "consul-cluster"
-  subnets         = ["${var.public_subnet_ids}"]
+  subnets         = ["${var.private_subnet_ids}"]
   security_groups = ["${aws_security_group.consul_elb.id}"]
+  internal        = true
 
   listener {
     instance_port     = 8300

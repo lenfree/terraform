@@ -16,7 +16,10 @@ do
        ubuntu-$(lsb_release -cs) \
        main"
     apt-get update
-    apt-get -y install docker-engine
+    apt-get -y install docker-engine unzip
+    curl -o consul.zip \
+      https://releases.hashicorp.com/consul/0.7.4/consul_0.7.4_linux_amd64.zip?_ga=1.163455103.2104290826.1486944921
+    unzip consul.zip
     apt-get install -y awscli && break || sleep 120
 done
 
